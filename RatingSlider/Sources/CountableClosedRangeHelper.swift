@@ -8,13 +8,13 @@
 
 import Foundation
 
-extension CountableClosedRange {
-    subscript(index: Int) -> Bound? {
+extension Range {
+    subscript(index: Int) -> Element? {
         return dropFirst(index).first
     }
 }
-extension CountableClosedRange where Bound: IntegerArithmetic {
-    func index(of element: Bound) -> Bound? {
+extension Range where Element: IntegerArithmeticType {
+    func index(of element: Element) -> Element? {
         guard self ~= element else { return nil }
         return element - first!
     }

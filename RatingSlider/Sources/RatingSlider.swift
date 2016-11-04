@@ -73,7 +73,7 @@ public class RatingSlider: UIControl {
         
         addSubview(inactiveGrid)
         addSubview(activeGrid)
-        activeGrid.mask = selection
+        activeGrid.maskView = selection
         
         updatedSize()
     }
@@ -119,22 +119,22 @@ public class RatingSlider: UIControl {
     
     // MARK: - Grids
     
-    private func grids(action: (RatingSliderGrid) -> ()) {
+    private func grids(@noescape action: (RatingSliderGrid) -> ()) {
         [activeGrid, inactiveGrid].forEach(action)
     }
     
     private lazy var activeGrid: RatingSliderGrid = RatingSliderGrid(
         range: 0...10,
-        textColor:   .white,
+        textColor:   .whiteColor(),
         backgroundColor: self.tintColor,
-        font: UIFont.systemFont(ofSize: 12)
+        font: .systemFontOfSize(12)
     )
     
     private lazy var inactiveGrid: RatingSliderGrid = RatingSliderGrid(
         range: 0...10,
-        textColor: .gray,
-        backgroundColor: .clear,
-        font: UIFont.systemFont(ofSize: 12)
+        textColor: .grayColor(),
+        backgroundColor: .clearColor(),
+        font: .systemFontOfSize(12)
     )
     
     private func updateGridsSize() {
@@ -149,7 +149,7 @@ public class RatingSlider: UIControl {
     private lazy var selection: UIView = {
         let selection = UIView()
         selection.layer.anchorPoint = .zero
-        selection.backgroundColor = .black
+        selection.backgroundColor = .blackColor()
         return selection
     }()
     
@@ -167,7 +167,7 @@ public class RatingSlider: UIControl {
         }
         let newWidth = firstElementWidth + (bounds.width - firstElementWidth) * value
         if !isSliding {
-            UIView.animate(withDuration: 0.2) {
+            UIView.animateWithDuration(0.2) {
                 self.selection.bounds.size.width = newWidth
             }
         } else {
@@ -177,9 +177,9 @@ public class RatingSlider: UIControl {
     
     // MARK: - Changing value
     
-    private func set(value: Int?) {
+    private func set(value value: Int?) {
         self.value = value
-        sendActions(for: .valueChanged)
+        sendActionsForControlEvents(.ValueChanged)
     }
     
     public var value: Int? {
@@ -199,7 +199,7 @@ public class RatingSlider: UIControl {
     
     private var floatingValue: CGFloat? {
         didSet {
-            if let newValue = floatingValue, !(0...1 ~= newValue) {
+            if let newValue = floatingValue where !(0...1 ~= newValue) {
                 floatingValue = max(0, min(1, newValue))
             }
             updateSelection(to: floatingValue)
@@ -212,15 +212,15 @@ public class RatingSlider: UIControl {
     private var touchDownValue: CGFloat?
     private var isSliding = false
     
-    public override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+    public override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
         guard let touch = touches.first else { return }
-        let touchX = touch.location(in: touch.view).x
+        let touchX = touch.locationInView(touch.view).x
         touchDownX = touchX
         set(value: value(atX: touchX))
         touchDownValue = floatingValue
     }
     
-    public override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+    public override func touchesMoved(touches: Set<UITouch>, withEvent event: UIEvent?) {
         guard
             let touchDownX = touchDownX,
             let touchDownValue = touchDownValue,
@@ -228,12 +228,12 @@ public class RatingSlider: UIControl {
         
         isSliding = true
         
-        let xDiff = touch.location(in: touch.view).x - touchDownX
+        let xDiff = touch.locationInView(touch.view).x - touchDownX
         let propotionalChange = xDiff / (bounds.width - firstElementWidth)
         floatingValue = touchDownValue + propotionalChange
     }
     
-    public override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+    public override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
         isSliding = false
         set(value: value)
         touchDownX = nil

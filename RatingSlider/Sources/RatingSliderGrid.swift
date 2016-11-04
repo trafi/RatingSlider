@@ -12,7 +12,7 @@ class RatingSliderGrid: UIView {
     
     // MARK: Configuration
     
-    var range: CountableClosedRange<Int> {
+    var range: Range<Int> {
         didSet { setupLabels() }
     }
     var textColor: UIColor {
@@ -24,7 +24,7 @@ class RatingSliderGrid: UIView {
     
     // MARK: Init
     
-    init(range: CountableClosedRange<Int>, textColor: UIColor, backgroundColor: UIColor, font: UIFont) {
+    init(range: Range<Int>, textColor: UIColor, backgroundColor: UIColor, font: UIFont) {
         self.range = range
         self.textColor = textColor
         self.font = font
@@ -51,7 +51,7 @@ class RatingSliderGrid: UIView {
             label.text = "\($0)"
             label.textColor = textColor
             label.font = font
-            label.textAlignment = .center
+            label.textAlignment = .Center
             addSubview(label)
             return label
         }
