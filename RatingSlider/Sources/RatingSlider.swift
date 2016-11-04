@@ -6,41 +6,53 @@
 //  Copyright © 2016 Trafi. All rights reserved.
 //
 
-import Foundation
 import UIKit
 
 // MARK: NPSSlider
 
 public class RatingSlider: UIControl {
     
-    // MARK: Configuration
+    // MARK: - Configuration
+    
     public var range = 0...10 {
         didSet {
-            setupLabels()
+            guard range != oldValue else { return }
+            set(value: nil)
+            grids { $0.range = range }
             updatedSize()
         }
     }
+    @IBInspectable public var font: UIFont {
+        get { return activeGrid.font }
+        set { grids { $0.font = newValue } }
+    }
     
-    public var activeLabelsColor = UIColor.white {
-        didSet { updateLabelsColor() }
+    // MARK: Active grid
+    
+    @IBInspectable public var activeLabelsColor: UIColor {
+        get { return activeGrid.textColor }
+        set { activeGrid.textColor = newValue }
     }
-    public var activeTrackColor: UIColor? {
-        get { return selection.backgroundColor }
-        set { selection.backgroundColor = newValue }
+    @IBInspectable public var activeTrackColor: UIColor? {
+        get { return activeGrid.backgroundColor }
+        set { activeGrid.backgroundColor = newValue }
     }
-    public var inactiveLabelsColor = UIColor(white: 74/255, alpha: 1) {
-        didSet { updateLabelsColor() }
+    public override var tintColor: UIColor! {
+        didSet { activeTrackColor = tintColor }
     }
-    public var inactiveTrackColor: UIColor {
-        get { return backgroundColor ?? UIColor(white: 223/255, alpha: 1) }
+    
+    // MARK: Inactive grid
+    
+    @IBInspectable public var inactiveLabelsColor: UIColor {
+        get { return inactiveGrid.textColor }
+        set { inactiveGrid.textColor = newValue }
+    }
+    @IBInspectable public var inactiveTrackColor: UIColor? {
+        get { return backgroundColor }
         set { backgroundColor = newValue }
     }
     
-    public var font = UIFont.boldSystemFont(ofSize: 12) {
-        didSet { labels.forEach { $0.font = font } }
-    }
-    
-    // MARK: Init
+    // MARK: - Init
     
     public override init(frame: CGRect) {
         super.init(frame: frame)
@@ -54,17 +66,31 @@ public class RatingSlider: UIControl {
     
     private func commonInit() {
         clipsToBounds = true
-        backgroundColor = inactiveTrackColor
+        
+        if backgroundColor == nil {
+            backgroundColor = UIColor(white: 0.9, alpha: 1)
+        }
+        
+        addSubview(inactiveGrid)
+        addSubview(activeGrid)
+        activeGrid.mask = selection
         
         updatedSize()
-        setupSelection()
-        setupLabels()
     }
     
-    // MARK: Size
+    // MARK: - Size
     
+    public override var frame: CGRect {
+        didSet {
+            guard frame.size != oldValue.size else { return }
+            updatedSize()
+        }
+    }
     public override var bounds: CGRect {
-        didSet { updatedSize() }
+        didSet {
+            guard bounds.size != oldValue.size else { return }
+            updatedSize()
+        }
     }
     
     var elementWidth: CGFloat = 0
@@ -88,17 +114,44 @@ public class RatingSlider: UIControl {
         firstElementWidth = margin + elementWidth + margin
         
         updateSelectionSize()
-        updateLabelsSize()
+        updateGridsSize()
     }
     
-    // Selection view
-    private let selection = UIView()
+    // MARK: - Grids
     
-    private func setupSelection() {
-        addSubview(selection)
+    private func grids(action: (RatingSliderGrid) -> ()) {
+        [activeGrid, inactiveGrid].forEach(action)
+    }
+    
+    private lazy var activeGrid: RatingSliderGrid = RatingSliderGrid(
+        range: 0...10,
+        textColor:   .white,
+        backgroundColor: self.tintColor,
+        font: UIFont.systemFont(ofSize: 12)
+    )
+    
+    private lazy var inactiveGrid: RatingSliderGrid = RatingSliderGrid(
+        range: 0...10,
+        textColor: .gray,
+        backgroundColor: .clear,
+        font: UIFont.systemFont(ofSize: 12)
+    )
+    
+    private func updateGridsSize() {
+        grids {
+            $0.bounds = bounds
+            $0.updateLabelsSize(withMargin: margin, elementWidth: elementWidth)
+        }
+    }
+    
+    // MARK: - Selection
+    
+    private lazy var selection: UIView = {
+        let selection = UIView()
         selection.layer.anchorPoint = .zero
-        activeTrackColor = tintColor
-    }
+        selection.backgroundColor = .black
+        return selection
+    }()
     
     private func updateSelectionSize() {
         selection.layer.cornerRadius = layer.cornerRadius
@@ -122,41 +175,7 @@ public class RatingSlider: UIControl {
         }
     }
     
-    // Labels
-    private var labels = [UILabel]()
-    
-    private func setupLabels() {
-        labels.forEach { $0.removeFromSuperview() }
-        labels = range.map {
-            let label = UILabel()
-            label.text = "\($0)"
-            label.font = font
-            label.textAlignment = .center
-            addSubview(label)
-            return label
-        }
-        updateLabelsSize()
-        updateLabelsColor()
-    }
-    
-    private func updateLabelsSize() {
-        var frame = CGRect(x: margin, y: 0, width: elementWidth, height: bounds.height)
-        labels.forEach {
-            $0.frame = frame
-            frame.origin.x += frame.width
-        }
-    }
-    
-    private func labelColor(atIndex index: Int) -> UIColor {
-        guard let valueIndex = value.flatMap(range.index(of:)) else { return inactiveLabelsColor }
-        return valueIndex >= index ? activeLabelsColor : inactiveLabelsColor
-    }
-    
-    private func updateLabelsColor() {
-        labels.enumerated().forEach { index, label in label.textColor = labelColor(atIndex: index) }
-    }
-    
-    // MARK: Changing value
+    // MARK: - Changing value
     
     private func set(value: Int?) {
         self.value = value
@@ -184,11 +203,10 @@ public class RatingSlider: UIControl {
                 floatingValue = max(0, min(1, newValue))
             }
             updateSelection(to: floatingValue)
-            updateLabelsColor()
         }
     }
     
-    // MARK: Touches
+    // MARK: - Touches
     
     private var touchDownX: CGFloat?
     private var touchDownValue: CGFloat?
