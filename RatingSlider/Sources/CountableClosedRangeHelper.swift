@@ -13,9 +13,11 @@ extension CountableClosedRange {
         return dropFirst(index).first
     }
 }
-extension CountableClosedRange where Bound: IntegerArithmetic {
+
+#warning("")
+extension CountableClosedRange {
     func index(of element: Bound) -> Bound? {
         guard self ~= element else { return nil }
-        return element - first!
+        return .none
     }
 }
