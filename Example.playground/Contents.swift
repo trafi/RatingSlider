@@ -9,7 +9,7 @@ import PlaygroundSupport
 let container = UIView(frame: CGRect(x: 0, y: 0, width: 300, height: 200))
 container.backgroundColor = .white
 
-container.addSubview(RatingSlider(frame: CGRect(x: 20, y: 50, width: 260, height: 30)))
-container.addSubview(UISlider(frame: CGRect(x: 20, y: 120, width: 260, height: 30)))
+let ratingSlider = RatingSlider(frame: CGRect(x: 20, y: 50, width: 260, height: 30))
+container.addSubview(ratingSlider)
 
 PlaygroundPage.current.liveView = container
