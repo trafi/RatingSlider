@@ -8,6 +8,29 @@
 
 import UIKit
 
+public enum GridStyle {
+    case labels(font: UIFont)
+    case dots(size: CGFloat, gridHeight: CGFloat?, hasUpperGrid: Bool)
+    
+    var hasUpperGrid: Bool {
+        switch self {
+        case .dots(_, _, let hasUpperGrid):
+            return hasUpperGrid
+        default:
+            return false
+        }
+    }
+    
+    var gridHeight: CGFloat? {
+        switch self {
+        case .dots(_, let gridHeight, _):
+            return gridHeight
+        default:
+            return nil
+        }
+    }
+}
+
 class RatingSliderGrid: UIView {
     
     // MARK: Configuration
@@ -15,29 +38,84 @@ class RatingSliderGrid: UIView {
     var range: CountableClosedRange<Int> {
         didSet { setupLabels() }
     }
-    var textColor: UIColor {
-        didSet { labels.forEach { $0.textColor = textColor } }
+    
+    var style: GridStyle {
+        didSet { updateItems(by: style) }
     }
-    var font: UIFont {
-        didSet { labels.forEach { $0.font = font } }
+    
+    var itemColor: UIColor = .white {
+        didSet { updateItems(by: style) }
     }
+    
+    var thumb: Thumb? = nil
     
     // MARK: Init
     
-    init(range: CountableClosedRange<Int>, textColor: UIColor, backgroundColor: UIColor, font: UIFont) {
+    init(range: CountableClosedRange<Int>, style: GridStyle, thumb: Thumb? = nil, backgroundColor: UIColor) {
         self.range = range
-        self.textColor = textColor
-        self.font = font
+        self.style = style
+        self.thumb = thumb
         
         super.init(frame: .zero)
         self.backgroundColor = backgroundColor
         self.layer.anchorPoint = .zero
         
-        setupLabels()
+        setupItems()
     }
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    // MARK: - Items
+    
+    private func setupItems() {
+        switch style {
+        case .labels:
+            setupLabels()
+        case .dots:
+            setupDots()
+        }
+    }
+    
+    private func updateItems(by style: GridStyle) {
+        switch style {
+        case .labels(let font):
+            updateLabels(with: font)
+        case .dots(let size, _, _):
+            updateDots(size: size)
+        }
+    }
+    
+    // MARK: - Dots
+    
+    private var dots = [UIView]()
+    
+    private func setupDots() {
+        guard case let .dots(size, _, _) = style else { return }
+        
+        dots.forEach { $0.removeFromSuperview() }
+        dots = range.map { [unowned self] _ in
+            let dotContainerView = UIView()
+            dotContainerView.backgroundColor = .clear
+            
+            let dot = UIView(frame: .init(x: 0, y: 0, width: size, height: size))
+            dot.backgroundColor = self.itemColor
+            dot.layer.cornerRadius = size / 2
+            
+            dotContainerView.addSubview(dot)
+            addSubview(dotContainerView)
+            
+            return dotContainerView
+        }
+    }
+    
+    private func updateDots(size: CGFloat) {
+        dots.forEach {
+            guard let dot = $0.subviews.first else { return }
+            dot.backgroundColor = itemColor
+            dot.frame.size = .init(width: size, height: size)
+        }
     }
     
     // MARK: Labels
@@ -45,11 +123,13 @@ class RatingSliderGrid: UIView {
     private var labels = [UILabel]()
     
     private func setupLabels() {
+        guard case let .labels(font) = style else { return }
+        
         labels.forEach { $0.removeFromSuperview() }
-        labels = range.map {
+        labels = range.map { [unowned self] in
             let label = UILabel()
             label.text = "\($0)"
-            label.textColor = textColor
+            label.textColor = self.itemColor
             label.font = font
             label.textAlignment = .center
             addSubview(label)
@@ -57,11 +137,48 @@ class RatingSliderGrid: UIView {
         }
     }
     
-    func updateLabelsSize(withMargin margin: CGFloat, elementWidth: CGFloat) {
+    func updateLabels(with font: UIFont) {
+        labels.forEach { [unowned self] in
+            $0.font = font
+            $0.textColor = self.itemColor
+        }
+    }
+    
+    func updateLabel(at value: Int?) {
+        labels.enumerated().forEach { index, label in
+            let fontWeight: UIFont.Weight = value == nil ? .regular : index == value ? .bold : .regular
+            label.font = .systemFont(ofSize: 12, weight: fontWeight)
+        }
+    }
+    
+    // MARK: - Update
+    
+    func updateItemSize(withMargin margin: CGFloat, elementWidth: CGFloat) {
+        switch style {
+        case .labels:
+            labelSize(margin: margin, elementWidth: elementWidth)
+        case .dots(let size, _, _):
+            dotSize(margin: margin, elementWidth: elementWidth, dotSize: size)
+        }
+    }
+    
+    private func dotSize(margin: CGFloat, elementWidth: CGFloat, dotSize: CGFloat) {
+        var frame = CGRect(x: margin, y: 0, width: elementWidth, height: bounds.height)
+        
+        dots.forEach {
+            $0.frame = frame
+            $0.subviews.first!.center.y = $0.frame.height / 2
+            $0.subviews.first!.center.x = $0.frame.width / 2
+            frame.origin.x += frame.width
+        }
+    }
+    
+    private func labelSize(margin: CGFloat, elementWidth: CGFloat) {
         var frame = CGRect(x: margin, y: 0, width: elementWidth, height: bounds.height)
         labels.forEach {
             $0.frame = frame
             frame.origin.x += frame.width
         }
     }
+    
 }

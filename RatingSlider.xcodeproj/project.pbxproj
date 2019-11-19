@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		C02A2B202382CE61004FDA6C /* Thumb.swift in Sources */ = {isa = PBXBuildFile; fileRef = C02A2B1F2382CE61004FDA6C /* Thumb.swift */; };
 		D33050831DCCBDC000798056 /* RatingSliderGrid.swift in Sources */ = {isa = PBXBuildFile; fileRef = D33050821DCCBDC000798056 /* RatingSliderGrid.swift */; };
 		D359D7B51DCB761100B2532E /* RatingSlider.h in Headers */ = {isa = PBXBuildFile; fileRef = D359D7B31DCB761100B2532E /* RatingSlider.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D359D7BD1DCB767900B2532E /* RatingSlider.swift in Sources */ = {isa = PBXBuildFile; fileRef = D359D7BC1DCB767900B2532E /* RatingSlider.swift */; };
@@ -14,6 +15,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		C02A2B1F2382CE61004FDA6C /* Thumb.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Thumb.swift; sourceTree = "<group>"; };
 		D33050821DCCBDC000798056 /* RatingSliderGrid.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RatingSliderGrid.swift; sourceTree = "<group>"; };
 		D359D7B01DCB761100B2532E /* RatingSlider.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = RatingSlider.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D359D7B31DCB761100B2532E /* RatingSlider.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RatingSlider.h; sourceTree = "<group>"; };
@@ -65,6 +67,7 @@
 				D359D7BC1DCB767900B2532E /* RatingSlider.swift */,
 				D33050821DCCBDC000798056 /* RatingSliderGrid.swift */,
 				D359D7BE1DCB769E00B2532E /* CountableClosedRangeHelper.swift */,
+				C02A2B1F2382CE61004FDA6C /* Thumb.swift */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
@@ -107,7 +110,7 @@
 		D359D7A71DCB761100B2532E /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0810;
+				LastUpgradeCheck = 1030;
 				ORGANIZATIONNAME = Trafi;
 				TargetAttributes = {
 					D359D7AF1DCB761100B2532E = {
@@ -152,6 +155,7 @@
 			files = (
 				D359D7BF1DCB769E00B2532E /* CountableClosedRangeHelper.swift in Sources */,
 				D359D7BD1DCB767900B2532E /* RatingSlider.swift in Sources */,
+				C02A2B202382CE61004FDA6C /* Thumb.swift in Sources */,
 				D33050831DCCBDC000798056 /* RatingSliderGrid.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -163,20 +167,30 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_SUSPICIOUS_MOVES = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
@@ -216,20 +230,30 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_SUSPICIOUS_MOVES = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
