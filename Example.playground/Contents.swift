@@ -18,9 +18,7 @@ let thumb = Thumb(size: 34,
 let frame = CGRect(x: 20, y: 100, width: 260, height: 50)
 
 let ratingSlider = RatingSlider(frame: frame,
-                                gridStyle: .dots(size: 3),
-                                gridHeight: 16.0,
-                                hasUpperGrid: true,
+                                gridStyle: .dots(size: 3, gridHeight: 16, hasUpperGrid: true),
                                 thumb: thumb)
 
 ratingSlider.activeTrackColor = #colorLiteral(red: 0.9425747991, green: 0.8432862163, blue: 0.1268348098, alpha: 1)
