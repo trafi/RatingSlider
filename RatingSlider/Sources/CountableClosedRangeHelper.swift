@@ -14,7 +14,6 @@ extension CountableClosedRange {
     }
 }
 
-#warning("Updated?")
 extension CountableClosedRange where Bound: Numeric {
     func index(of element: Bound) -> Bound? {
         guard self ~= element else { return nil }
