@@ -86,8 +86,8 @@ public class RatingSlider: UIControl {
         setupContainerView()
         setupContainerViewSubviews()
         setupSelectionMask()
-        setupThumbViewIfNeeded()
         setupTopGripViewIfNeeded()
+        setupThumbViewIfNeeded()
         
         updatedSize()
     }
@@ -108,7 +108,8 @@ public class RatingSlider: UIControl {
         containerView.heightAnchor.constraint(equalToConstant: height).isActive = true
         containerView.leftAnchor.constraint(equalTo: self.leftAnchor).isActive = true
         containerView.rightAnchor.constraint(equalTo: self.rightAnchor).isActive = true
-        containerView.layoutIfNeeded()
+        
+        self.layoutIfNeeded()
     }
     
     private func setupContainerViewSubviews() {
@@ -124,19 +125,28 @@ public class RatingSlider: UIControl {
         guard let thumb = thumb, let thumbView = thumbView else { return }
         addSubview(thumbView)
         
-        thumbView.translatesAutoresizingMaskIntoConstraints = false
-        thumbView.heightAnchor.constraint(equalToConstant: thumb.size).isActive = true
-        thumbView.widthAnchor.constraint(equalToConstant: thumb.size).isActive = true
-        thumbView.centerYAnchor.constraint(equalTo: containerView.centerYAnchor).isActive = true
+        
+        // self
+        // UpperGrid?
+        // ContainerView?
+            // active
+            // inactive
+        // Thumb?
+        
+        print("Center: - \(containerView.center)")
+        
+        thumbView.frame.size = CGSize(width: thumb.size, height: thumb.size)
+        thumbView.center = containerView.center
+        //thumbView.center.x = firstElementWidth / 2
     }
     
     private func setupTopGripViewIfNeeded() {
         guard hasUpperGrid else { return }
-        topGrid.itemColor = .gray
-        topGrid.bounds = CGRect(x: 0, y: 0, width: self.bounds.width, height: upperGridHeight)
-        addSubview(topGrid)
+        upperGrid.itemColor = .gray
+        upperGrid.bounds = CGRect(x: 0, y: 0, width: self.bounds.width, height: upperGridHeight)
+        addSubview(upperGrid)
         
-        topGrid.layoutIfNeeded()
+        upperGrid.layoutIfNeeded()
     }
 
     // MARK: - Size
@@ -188,10 +198,10 @@ public class RatingSlider: UIControl {
     // MARK: - Grids
     
     private func grids(action: (RatingSliderGrid) -> ()) {
-        [activeGrid, inactiveGrid, topGrid].forEach(action)
+        [activeGrid, inactiveGrid, upperGrid].forEach(action)
     }
     
-    private lazy var topGrid: RatingSliderGrid = RatingSliderGrid(
+    private lazy var upperGrid: RatingSliderGrid = RatingSliderGrid(
         range: self.range,
         style: .labels(font: UIFont.systemFont(ofSize: 12)),
         backgroundColor: .clear
@@ -213,7 +223,7 @@ public class RatingSlider: UIControl {
     
     private func updateGridsSize() {
         grids {
-            if $0 != topGrid { $0.bounds = containerView.bounds }
+            if $0 != upperGrid { $0.bounds = containerView.bounds }
             $0.updateItemSize(withMargin: margin, elementWidth: elementWidth)
         }
     }
@@ -257,28 +267,31 @@ public class RatingSlider: UIControl {
     }
     
     private func updateSelection(to value: CGFloat?) {
+        
+        updateUpperGridValueIfNeeded()
+        
         guard let value = value else {
-            selection.bounds.size.width = 0
+            UIView.animate(withDuration: 0.2) { [unowned self] in
+                self.selection.bounds.size.width = 0
+                self.thumbView?.center = self.containerView.center
+            }
             return
         }
+        
         let newWidth = firstElementWidth + (bounds.width - firstElementWidth) * value
         if !isSliding {
             UIView.animate(withDuration: 0.2) { [unowned self] in
                 self.selection.bounds.size.width = newWidth
                 self.thumbView?.center.x = (self.selection.bounds.maxX - (self.firstElementWidth / 2))
-                self.thumbView?.layoutIfNeeded()
             }
         } else {
             selection.bounds.size.width = newWidth
             thumbView?.center.x = (selection.bounds.maxX - (firstElementWidth / 2))
         }
-        
-        updateUpperGridValueIfNeeded()
     }
     
     private func updateUpperGridValueIfNeeded() {
-        guard let value = value else { return }
-        topGrid.updateLabel(at: value)
+        upperGrid.updateLabel(at: value)
     }
     
     // MARK: - Changing value

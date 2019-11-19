@@ -126,10 +126,10 @@ class RatingSliderGrid: UIView {
         }
     }
     
-    func updateLabel(at value: Int) {
-        if value > labels.count { return }
+    func updateLabel(at value: Int?) {
         labels.enumerated().forEach { index, label in
-            label.font = .systemFont(ofSize: 12, weight: index == value ? .bold : .regular)
+            let fontWeight: UIFont.Weight = value == nil ? .regular : index == value ? .bold : .regular
+            label.font = .systemFont(ofSize: 12, weight: fontWeight)
         }
     }
     
