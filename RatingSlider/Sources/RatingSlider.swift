@@ -125,19 +125,8 @@ public class RatingSlider: UIControl {
         guard let thumb = thumb, let thumbView = thumbView else { return }
         addSubview(thumbView)
         
-        
-        // self
-        // UpperGrid?
-        // ContainerView?
-            // active
-            // inactive
-        // Thumb?
-        
-        print("Center: - \(containerView.center)")
-        
         thumbView.frame.size = CGSize(width: thumb.size, height: thumb.size)
         thumbView.center = containerView.center
-        //thumbView.center.x = firstElementWidth / 2
     }
     
     private func setupTopGripViewIfNeeded() {

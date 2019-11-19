@@ -145,8 +145,6 @@ class RatingSliderGrid: UIView {
     }
     
     private func dotSize(margin: CGFloat, elementWidth: CGFloat, dotSize: CGFloat) {
-//        let dotCenter = dotSize / 2
-//        let x = thumbCenter() == nil ? margin : thumbCenter()! - dotCenter
         var frame = CGRect(x: margin, y: 0, width: elementWidth, height: bounds.height)
         
         dots.forEach {
@@ -165,13 +163,4 @@ class RatingSliderGrid: UIView {
         }
     }
     
-//    // thumb value
-//    private func thumbCenter() -> CGFloat? {
-//        return nil
-//        guard let thumb = thumb else { return nil }
-//        let thumbCenterX = thumb.size / 2
-//        let thumbHoleCenterX = thumb.hole / 2
-//
-//        return thumbCenterX - thumbHoleCenterX
-//    }
 }
