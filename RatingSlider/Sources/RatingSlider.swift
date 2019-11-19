@@ -13,12 +13,12 @@ import UIKit
 public class RatingSlider: UIControl {
     
     private var gridStyle: GridStyle = .labels(font: .systemFont(ofSize: 12))
-    private var gridHeight: CGFloat?
-    
-    private var hasUpperGrid = true
     private var upperGridHeight: CGFloat = 20.0
     
     private var thumb: Thumb? = nil
+    
+    private var hasUpperGrid: Bool { return gridStyle.hasUpperGrid }
+    private var gridHeight: CGFloat? { return gridStyle.gridHeight }
     
     // MARK: - Configuration
     
@@ -63,15 +63,11 @@ public class RatingSlider: UIControl {
     
     public init(frame: CGRect,
                 gridStyle: GridStyle = .labels(font: .systemFont(ofSize: 12)),
-                gridHeight: CGFloat? = nil,
-                hasUpperGrid: Bool = false,
                 thumb: Thumb? = nil) {
         
         super.init(frame: frame)
         
         self.gridStyle = gridStyle
-        self.gridHeight = gridHeight
-        self.hasUpperGrid = hasUpperGrid
         self.thumb = thumb
         
         commonInit()

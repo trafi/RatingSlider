@@ -10,7 +10,25 @@ import UIKit
 
 public enum GridStyle {
     case labels(font: UIFont)
-    case dots(size: CGFloat)
+    case dots(size: CGFloat, gridHeight: CGFloat?, hasUpperGrid: Bool)
+    
+    var hasUpperGrid: Bool {
+        switch self {
+        case .dots(_, _, let hasUpperGrid):
+            return hasUpperGrid
+        default:
+            return false
+        }
+    }
+    
+    var gridHeight: CGFloat? {
+        switch self {
+        case .dots(_, let gridHeight, _):
+            return gridHeight
+        default:
+            return nil
+        }
+    }
 }
 
 class RatingSliderGrid: UIView {
@@ -64,7 +82,7 @@ class RatingSliderGrid: UIView {
         switch style {
         case .labels(let font):
             updateLabels(with: font)
-        case .dots(let size):
+        case .dots(let size, _, _):
             updateDots(size: size)
         }
     }
@@ -74,7 +92,7 @@ class RatingSliderGrid: UIView {
     private var dots = [UIView]()
     
     private func setupDots() {
-        guard case let .dots(size) = style else { return }
+        guard case let .dots(size, _, _) = style else { return }
         
         dots.forEach { $0.removeFromSuperview() }
         dots = range.map { [unowned self] _ in
@@ -139,7 +157,7 @@ class RatingSliderGrid: UIView {
         switch style {
         case .labels:
             labelSize(margin: margin, elementWidth: elementWidth)
-        case .dots(let size):
+        case .dots(let size, _, _):
             dotSize(margin: margin, elementWidth: elementWidth, dotSize: size)
         }
     }
