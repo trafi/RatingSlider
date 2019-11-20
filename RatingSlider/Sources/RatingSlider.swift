@@ -61,6 +61,11 @@ open class RatingSlider: UIControl {
     
     // MARK: - Init
     
+    public override init(frame: CGRect) {
+        super.init(frame: frame)
+        commonInit()
+    }
+    
     public init(frame: CGRect,
                 gridStyle: GridStyle = .labels(font: .systemFont(ofSize: 12)),
                 thumb: Thumb? = nil) {
