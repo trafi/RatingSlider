@@ -10,7 +10,7 @@ import UIKit
 
 // MARK: NPSSlider
 
-public class RatingSlider: UIControl {
+open class RatingSlider: UIControl {
     
     private var gridStyle: GridStyle = .labels(font: .systemFont(ofSize: 12))
     private var upperGridHeight: CGFloat = 20.0
@@ -43,7 +43,7 @@ public class RatingSlider: UIControl {
         set { activeGrid.backgroundColor = newValue }
     }
     
-    public override var tintColor: UIColor! {
+    open override var tintColor: UIColor! {
         didSet { activeTrackColor = tintColor }
     }
     
@@ -143,13 +143,13 @@ public class RatingSlider: UIControl {
         return view
     }()
     
-    public override var frame: CGRect {
+    open override var frame: CGRect {
         didSet {
             guard frame.size != oldValue.size else { return }
             updatedSize()
         }
     }
-    public override var bounds: CGRect {
+    open override var bounds: CGRect {
         didSet {
             guard bounds.size != oldValue.size else { return }
             updatedSize()
@@ -316,7 +316,7 @@ public class RatingSlider: UIControl {
     private var touchDownValue: CGFloat?
     private var isSliding = false
     
-    public override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+    open override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         guard let touch = touches.first else { return }
         let touchX = touch.location(in: containerView).x
         touchDownX = touchX
@@ -324,7 +324,7 @@ public class RatingSlider: UIControl {
         touchDownValue = floatingValue
     }
     
-    public override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+    open override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
         guard
             let touchDownX = touchDownX,
             let touchDownValue = touchDownValue,
@@ -337,7 +337,7 @@ public class RatingSlider: UIControl {
         floatingValue = touchDownValue + propotionalChange
     }
     
-    public override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+    open override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         isSliding = false
         set(value: value)
         touchDownX = nil
