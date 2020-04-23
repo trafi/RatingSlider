@@ -1,3 +1,13 @@
+//
+//  RatingSliderGrid.swift
+//  RatingSlider
+//
+//  Created by Domas on 04/11/2016.
+//  Copyright © 2016 Trafi. All rights reserved.
+//
+
+import UIKit
+
 public struct Thumb {
     public var size = CGFloat()
     public var hole = CGFloat()
