@@ -1,4 +1,4 @@
-[![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
+[![Swift Package Manager compatible](https://img.shields.io/badge/Swift%20Package%20Manager-compatible-brightgreen.svg)](https://github.com/apple/swift-package-manager) [![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
 
 # RatingSlider
 
@@ -30,7 +30,13 @@ slider.inactiveTrackColor = .lightGray // maps to `background` property
 ```
 
 # Installation
-Using [Carthage](https://github.com/Carthage/Carthage#adding-frameworks-to-an-application). Add the following line to your Cartfile:
+
+### [Swift Package Manager](https://developer.apple.com/documentation/xcode/adding_package_dependencies_to_your_app)
+Open your project in Xcode and select File > Swift Packages > Add Package Dependency. There enter `https://github.com/trafi/RatingSlider` as the repository URL.
+
+### [Carthage](https://github.com/Carthage/Carthage#adding-frameworks-to-an-application)
+
+Add the following line to your `Cartfile`:
 ```
 github "Trafi/RatingSlider"
 ```
