@@ -29,7 +29,7 @@ open class RatingSlider: UIControl {
     // MARK: Active grid
 
     @IBInspectable public var activeTrackColor: UIColor? {
-        get { return activeGrid.backgroundColor }
+        get { activeGrid.backgroundColor }
         set { activeGrid.backgroundColor = newValue }
     }
     
@@ -40,7 +40,7 @@ open class RatingSlider: UIControl {
     // MARK: Inactive grid
 
     @IBInspectable public var inactiveTrackColor: UIColor? {
-        get { return inactiveGrid.backgroundColor }
+        get { inactiveGrid.backgroundColor }
         set { inactiveGrid.backgroundColor = newValue }
     }
     
@@ -118,7 +118,11 @@ open class RatingSlider: UIControl {
     }
     
     private func setupTopGripViewIfNeeded() {
-        guard gridStyle.hasUpperLabeledGrid, let height = gridStyle.labeledGridHeight else { return }
+        guard
+            gridStyle.hasUpperLabeledGrid,
+            let height = gridStyle.labeledGridHeight,
+            let upperGrid = upperGrid
+        else { return }
 
         upperGrid.bounds = CGRect(x: 0, y: 0, width: bounds.width, height: height)
         addSubview(upperGrid)
@@ -174,26 +178,27 @@ open class RatingSlider: UIControl {
     // MARK: - Grids
     
     private func grids(action: (RatingSliderGrid) -> ()) {
-        [activeGrid, inactiveGrid, upperGrid].forEach(action)
+        [activeGrid, inactiveGrid, upperGrid]
+            .compactMap { $0 }
+            .forEach(action)
     }
     
-    private lazy var upperGrid: RatingSliderGrid = RatingSliderGrid(
-        range: self.range,
-        style: .labeled(.default),
-        backgroundColor: .clear
-    )
+    private lazy var upperGrid: RatingSliderGrid? = {
+        guard case .dotted(let appearance) = gridStyle, let style = appearance.labels else { return nil }
+        return .init(range: range, style: .labeled(style), backgroundColor: .clear)
+    }()
     
     private lazy var activeGrid: RatingSliderGrid = RatingSliderGrid(
-        range: self.range,
-        style: self.gridStyle,
-        thumb: self.thumb,
-        backgroundColor: self.tintColor
+        range: range,
+        style: gridStyle,
+        thumb: thumb,
+        backgroundColor: tintColor
     )
     
     private lazy var inactiveGrid: RatingSliderGrid = RatingSliderGrid(
-        range: self.range,
-        style: self.gridStyle,
-        thumb: self.thumb,
+        range: range,
+        style: gridStyle,
+        thumb: thumb,
         backgroundColor: UIColor(white: 0.9, alpha: 1)
     )
     
@@ -244,7 +249,7 @@ open class RatingSlider: UIControl {
     
     private func updateSelection(to value: CGFloat?) {
         
-        updateGridSubviews()
+        updateGridsSelection()
         
         guard let value = value else {
             UIView.animate(withDuration: 0.2) { [unowned self] in
@@ -266,10 +271,10 @@ open class RatingSlider: UIControl {
         }
     }
     
-    private func updateGridSubviews() {
-        upperGrid.updateLabel(at: value)
-        activeGrid.updateDot(at: value)
-        inactiveGrid.updateDot(at: value)
+    private func updateGridsSelection() {
+        [activeGrid, inactiveGrid, upperGrid]
+            .compactMap { $0 }
+            .forEach { $0.updateSelection(at: value) }
     }
     
     // MARK: - Changing value

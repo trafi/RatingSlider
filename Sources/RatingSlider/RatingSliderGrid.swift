@@ -92,7 +92,7 @@ class RatingSliderGrid: UIView {
         }
     }
 
-    func updateDot(at value: Int?) {
+    private func updateDot(at value: Int?) {
         guard case .dotted(let appearance) = style else { return }
 
         dots.enumerated().forEach { index, container in
@@ -131,16 +131,15 @@ class RatingSliderGrid: UIView {
         }
     }
     
-    func updateLabels(with appearance: LabelAppearance) {
+    private func updateLabels(with appearance: LabelAppearance) {
         labels.forEach {
             $0.font = appearance.inactiveFont
             $0.textColor = appearance.inactiveColor
         }
     }
     
-    func updateLabel(at value: Int?) {
+    private func updateLabel(at value: Int?) {
         guard case .labeled(let appearance) = style else { return }
-
         labels.enumerated().forEach { index, label in
             let isActive = value == nil ? false : index == value
             let style = appearance.fontAndColor(isActive: isActive)
@@ -178,5 +177,10 @@ class RatingSliderGrid: UIView {
             $0.frame = frame
             frame.origin.x += frame.width
         }
+    }
+
+    func updateSelection(at value: Int?) {
+        updateLabel(at: value)
+        updateDot(at: value)
     }
 }
