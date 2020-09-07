@@ -1,11 +1,3 @@
-//
-//  Appearances.swift
-//  RatingSlider
-//
-//  Created by Ignas Jasiunas on 2020-09-07.
-//  Copyright © 2020 Trafi. All rights reserved.
-//
-
 import Foundation
 import UIKit
 
