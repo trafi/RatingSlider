@@ -8,29 +8,6 @@
 
 import UIKit
 
-public enum GridStyle {
-    case labels(font: UIFont)
-    case dots(size: CGFloat, gridHeight: CGFloat?, hasUpperGrid: Bool)
-    
-    var hasUpperGrid: Bool {
-        switch self {
-        case .dots(_, _, let hasUpperGrid):
-            return hasUpperGrid
-        default:
-            return false
-        }
-    }
-    
-    var gridHeight: CGFloat? {
-        switch self {
-        case .dots(_, let gridHeight, _):
-            return gridHeight
-        default:
-            return nil
-        }
-    }
-}
-
 class RatingSliderGrid: UIView {
     
     // MARK: Configuration
@@ -40,10 +17,6 @@ class RatingSliderGrid: UIView {
     }
     
     var style: GridStyle {
-        didSet { updateItems(by: style) }
-    }
-    
-    var itemColor: UIColor = .white {
         didSet { updateItems(by: style) }
     }
     
@@ -71,19 +44,19 @@ class RatingSliderGrid: UIView {
     
     private func setupItems() {
         switch style {
-        case .labels:
+        case .labeled:
             setupLabels()
-        case .dots:
+        case .dotted:
             setupDots()
         }
     }
     
     private func updateItems(by style: GridStyle) {
         switch style {
-        case .labels(let font):
-            updateLabels(with: font)
-        case .dots(let size, _, _):
-            updateDots(size: size)
+        case .labeled(let appearance):
+            updateLabels(with: appearance)
+        case .dotted(let appearance):
+            updateDots(with: appearance)
         }
     }
     
@@ -92,16 +65,16 @@ class RatingSliderGrid: UIView {
     private var dots = [UIView]()
     
     private func setupDots() {
-        guard case let .dots(size, _, _) = style else { return }
+        guard case .dotted(let appearance) = style else { return }
         
         dots.forEach { $0.removeFromSuperview() }
-        dots = range.map { [unowned self] _ in
+        dots = range.map { _ in
             let dotContainerView = UIView()
             dotContainerView.backgroundColor = .clear
             
-            let dot = UIView(frame: .init(x: 0, y: 0, width: size, height: size))
-            dot.backgroundColor = self.itemColor
-            dot.layer.cornerRadius = size / 2
+            let dot = UIView(frame: .init(x: 0, y: 0, width: appearance.inactiveSize, height: appearance.inactiveSize))
+            dot.backgroundColor = appearance.inactiveColor
+            dot.layer.cornerRadius = appearance.inactiveSize / 2
             
             dotContainerView.addSubview(dot)
             addSubview(dotContainerView)
@@ -110,11 +83,32 @@ class RatingSliderGrid: UIView {
         }
     }
     
-    private func updateDots(size: CGFloat) {
+    private func updateDots(with appearance: DotAppearance) {
         dots.forEach {
             guard let dot = $0.subviews.first else { return }
-            dot.backgroundColor = itemColor
-            dot.frame.size = .init(width: size, height: size)
+            dot.frame.size = .init(width: appearance.inactiveSize, height: appearance.inactiveSize)
+            dot.layer.cornerRadius = appearance.inactiveSize / 2
+            dot.backgroundColor = appearance.inactiveColor
+        }
+    }
+
+    func updateDot(at value: Int?) {
+        guard case .dotted(let appearance) = style else { return }
+
+        dots.enumerated().forEach { index, container in
+            let isActive = value == nil ? false : index == value
+
+            let dot = container.subviews.first!
+            let style = appearance.sizeAndColor(isActive: isActive)
+
+            dot.backgroundColor = style.color
+            dot.frame = .init(
+                x: container.frame.width / 2 - style.size / 2,
+                y: container.frame.height / 2 - style.size / 2,
+                width: style.size,
+                height: style.size
+            )
+            dot.layer.cornerRadius = style.size / 2
         }
     }
     
@@ -123,31 +117,36 @@ class RatingSliderGrid: UIView {
     private var labels = [UILabel]()
     
     private func setupLabels() {
-        guard case let .labels(font) = style else { return }
+        guard case .labeled(let appearance) = style else { return }
         
         labels.forEach { $0.removeFromSuperview() }
-        labels = range.map { [unowned self] in
+        labels = range.map {
             let label = UILabel()
             label.text = "\($0)"
-            label.textColor = self.itemColor
-            label.font = font
+            label.textColor = appearance.inactiveColor
+            label.font = appearance.inactiveFont
             label.textAlignment = .center
             addSubview(label)
             return label
         }
     }
     
-    func updateLabels(with font: UIFont) {
-        labels.forEach { [unowned self] in
-            $0.font = font
-            $0.textColor = self.itemColor
+    func updateLabels(with appearance: LabelAppearance) {
+        labels.forEach {
+            $0.font = appearance.inactiveFont
+            $0.textColor = appearance.inactiveColor
         }
     }
     
     func updateLabel(at value: Int?) {
+        guard case .labeled(let appearance) = style else { return }
+
         labels.enumerated().forEach { index, label in
-            let fontWeight: UIFont.Weight = value == nil ? .regular : index == value ? .bold : .regular
-            label.font = .systemFont(ofSize: 12, weight: fontWeight)
+            let isActive = value == nil ? false : index == value
+            let style = appearance.fontAndColor(isActive: isActive)
+
+            label.font = style.font
+            label.textColor = style.color
         }
     }
     
@@ -155,10 +154,10 @@ class RatingSliderGrid: UIView {
     
     func updateItemSize(withMargin margin: CGFloat, elementWidth: CGFloat) {
         switch style {
-        case .labels:
+        case .labeled:
             labelSize(margin: margin, elementWidth: elementWidth)
-        case .dots(let size, _, _):
-            dotSize(margin: margin, elementWidth: elementWidth, dotSize: size)
+        case .dotted(let appearance):
+            dotSize(margin: margin, elementWidth: elementWidth, dotSize: appearance.activeSize)
         }
     }
     
@@ -180,5 +179,4 @@ class RatingSliderGrid: UIView {
             frame.origin.x += frame.width
         }
     }
-    
 }
