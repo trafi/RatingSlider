@@ -15,7 +15,7 @@ let thumb = Thumb(size: 34,
                   color: .white,
                   shadowColor: .black)
 
-let frame = CGRect(x: 20, y: 100, width: 260, height: 50)
+let frame = CGRect(x: 20, y: 100, width: 260, height: 60)
 
 let dottedStyle = GridStyle.dotted(.init(
     activeColor: .blue,
@@ -40,6 +40,7 @@ let ratingSlider = RatingSlider(frame: frame, gridStyle: dottedStyle, thumb: thu
 ratingSlider.activeTrackColor = #colorLiteral(red: 0.9425747991, green: 0.8432862163, blue: 0.1268348098, alpha: 1)
 ratingSlider.inactiveTrackColor = #colorLiteral(red: 0.8508961797, green: 0.8510394692, blue: 0.850877285, alpha: 1)
 ratingSlider.range = 0...10
+ratingSlider.startThumbSwingAnimation(power: 2.5, duration: 0.3)
 
 container.addSubview(ratingSlider)
 
