@@ -19,7 +19,7 @@ public enum GridStyle {
 
     var labeledGridHeight: CGFloat? {
         guard case .dotted(let appearance) = self, let labeledAppearance = appearance.labels else { return nil }
-        return labeledAppearance.inactiveFont.textHeight()
+        return max(labeledAppearance.inactiveFont.textHeight(), labeledAppearance.activeFont.textHeight())
     }
 }
 
@@ -65,8 +65,8 @@ public struct DotAppearance {
     public init(
         activeColor: UIColor = .black,
         activeSize: CGFloat = 3.0,
-        inactiveSize: CGFloat = 3.0,
         inactiveColor: UIColor = .lightGray,
+        inactiveSize: CGFloat = 3.0,
         labels: LabelAppearance? = nil
     ) {
         self.activeColor = activeColor
