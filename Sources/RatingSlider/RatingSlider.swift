@@ -12,13 +12,8 @@ import UIKit
 
 open class RatingSlider: UIControl {
     
-    private var gridStyle: GridStyle = .labels(font: .systemFont(ofSize: 12))
-    private var upperGridHeight: CGFloat = 20.0
-    
+    private var gridStyle: GridStyle = .labeled(.default)
     private var thumb: Thumb? = nil
-    
-    private var hasUpperGrid: Bool { return gridStyle.hasUpperGrid }
-    private var gridHeight: CGFloat? { return gridStyle.gridHeight }
     
     // MARK: - Configuration
     
@@ -32,14 +27,9 @@ open class RatingSlider: UIControl {
     }
     
     // MARK: Active grid
-    
-    @IBInspectable public var activeColor: UIColor {
-        get { return activeGrid.itemColor }
-        set { activeGrid.itemColor = newValue }
-    }
-    
+
     @IBInspectable public var activeTrackColor: UIColor? {
-        get { return activeGrid.backgroundColor }
+        get { activeGrid.backgroundColor }
         set { activeGrid.backgroundColor = newValue }
     }
     
@@ -48,17 +38,12 @@ open class RatingSlider: UIControl {
     }
     
     // MARK: Inactive grid
-    
-    @IBInspectable public var inactiveColor: UIColor {
-        get { return inactiveGrid.itemColor }
-        set { inactiveGrid.itemColor = newValue }
-    }
-    
+
     @IBInspectable public var inactiveTrackColor: UIColor? {
-        get { return inactiveGrid.backgroundColor }
+        get { inactiveGrid.backgroundColor }
         set { inactiveGrid.backgroundColor = newValue }
     }
-    
+
     // MARK: - Init
     
     public override init(frame: CGRect) {
@@ -66,16 +51,14 @@ open class RatingSlider: UIControl {
         commonInit()
     }
     
-    public init(frame: CGRect,
-                gridStyle: GridStyle = .labels(font: .systemFont(ofSize: 12)),
-                thumb: Thumb? = nil) {
-        
+    public init(frame: CGRect, gridStyle: GridStyle = .labeled(.default), thumb: Thumb? = nil) {
         super.init(frame: frame)
         
         self.gridStyle = gridStyle
         self.thumb = thumb
         
         commonInit()
+
     }
     
     public required init?(coder aDecoder: NSCoder) {
@@ -84,32 +67,52 @@ open class RatingSlider: UIControl {
     }
     
     private func commonInit() {
+        setupTopGripViewIfNeeded()
+        setupThumbViewIfNeeded()
         setupContainerView()
         setupContainerViewSubviews()
         setupSelectionMask()
-        setupTopGripViewIfNeeded()
-        setupThumbViewIfNeeded()
-        
+
         updatedSize()
     }
-    
+
     private func setupContainerView() {
+        containerView.translatesAutoresizingMaskIntoConstraints = false
         addSubview(containerView)
-        
+
         var additionalSpacing: CGFloat {
-            guard let gridHeight = gridHeight, let thumbSize = thumb?.size else { return 0.0 }
-            return thumbSize > gridHeight ? (thumbSize - gridHeight) / 2 : 0.0
+            guard
+                let labeledGridHeight = gridStyle.labeledGridHeight,
+                let thumbHeight = thumb?.size,
+                thumbHeight > labeledGridHeight
+            else { return 0.0 }
+
+            return (thumbHeight - labeledGridHeight) / 2
         }
         
-        let topConstraint: CGFloat = hasUpperGrid ? upperGridHeight : 0
-        let height = (gridHeight ?? thumb?.size) ?? bounds.height - topConstraint
-        
-        containerView.topAnchor.constraint(equalTo: self.topAnchor, constant: topConstraint + additionalSpacing).isActive = true
-        containerView.translatesAutoresizingMaskIntoConstraints = false
+        let topConstraint: CGFloat = gridStyle.hasUpperLabeledGrid ? gridStyle.labeledGridHeight! : 0
+        let height = (gridStyle.labeledGridHeight ?? thumb?.size) ?? bounds.height - topConstraint
+
+        // Top, Upper grid
+        if let upperGrid = upperGrid {
+            upperGrid.topAnchor.constraint(greaterThanOrEqualTo: topAnchor).isActive = true
+            upperGrid.rightAnchor.constraint(equalTo: rightAnchor).isActive = true
+            upperGrid.leftAnchor.constraint(equalTo: leftAnchor).isActive = true
+            containerView.topAnchor.constraint(greaterThanOrEqualTo: upperGrid.bottomAnchor).isActive = true
+        } else {
+            containerView.topAnchor.constraint(equalTo: self.topAnchor).isActive = true
+        }
+
+        // Bottom constraint
+        let bottomConstant = min(0, height - (thumb?.size ?? 0.0))
+        containerView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: bottomConstant / 2).isActive = true
+
+        // Right, Left
+        containerView.leftAnchor.constraint(equalTo: leftAnchor).isActive = true
+        containerView.rightAnchor.constraint(equalTo: rightAnchor).isActive = true
+
         containerView.heightAnchor.constraint(equalToConstant: height).isActive = true
-        containerView.leftAnchor.constraint(equalTo: self.leftAnchor).isActive = true
-        containerView.rightAnchor.constraint(equalTo: self.rightAnchor).isActive = true
-        
+
         self.layoutIfNeeded()
     }
     
@@ -125,17 +128,21 @@ open class RatingSlider: UIControl {
     private func setupThumbViewIfNeeded() {
         guard let thumb = thumb, let thumbView = thumbView else { return }
         addSubview(thumbView)
-        
+
+        thumbView.layer.zPosition = 1
         thumbView.frame.size = CGSize(width: thumb.size, height: thumb.size)
         thumbView.center = containerView.center
     }
     
     private func setupTopGripViewIfNeeded() {
-        guard hasUpperGrid else { return }
-        upperGrid.itemColor = .gray
-        upperGrid.bounds = CGRect(x: 0, y: 0, width: self.bounds.width, height: upperGridHeight)
+        guard
+            gridStyle.hasUpperLabeledGrid,
+            let height = gridStyle.labeledGridHeight,
+            let upperGrid = upperGrid
+        else { return }
+
+        upperGrid.bounds = CGRect(x: 0, y: 0, width: bounds.width, height: height)
         addSubview(upperGrid)
-        
         upperGrid.layoutIfNeeded()
     }
 
@@ -188,26 +195,27 @@ open class RatingSlider: UIControl {
     // MARK: - Grids
     
     private func grids(action: (RatingSliderGrid) -> ()) {
-        [activeGrid, inactiveGrid, upperGrid].forEach(action)
+        [activeGrid, inactiveGrid, upperGrid]
+            .compactMap { $0 }
+            .forEach(action)
     }
     
-    private lazy var upperGrid: RatingSliderGrid = RatingSliderGrid(
-        range: self.range,
-        style: .labels(font: UIFont.systemFont(ofSize: 12)),
-        backgroundColor: .clear
-    )
+    private lazy var upperGrid: RatingSliderGrid? = {
+        guard case .dotted(let appearance) = gridStyle, let style = appearance.labels else { return nil }
+        return .init(range: range, style: .labeled(style), backgroundColor: .clear)
+    }()
     
     private lazy var activeGrid: RatingSliderGrid = RatingSliderGrid(
-        range: self.range,
-        style: self.gridStyle,
-        thumb: self.thumb,
-        backgroundColor: self.tintColor
+        range: range,
+        style: gridStyle,
+        thumb: thumb,
+        backgroundColor: tintColor
     )
     
     private lazy var inactiveGrid: RatingSliderGrid = RatingSliderGrid(
-        range: self.range,
-        style: self.gridStyle,
-        thumb: self.thumb,
+        range: range,
+        style: gridStyle,
+        thumb: thumb,
         backgroundColor: UIColor(white: 0.9, alpha: 1)
     )
     
@@ -258,7 +266,7 @@ open class RatingSlider: UIControl {
     
     private func updateSelection(to value: CGFloat?) {
         
-        updateUpperGridValueIfNeeded()
+        updateGridsSelection()
         
         guard let value = value else {
             UIView.animate(withDuration: 0.2) { [unowned self] in
@@ -280,8 +288,10 @@ open class RatingSlider: UIControl {
         }
     }
     
-    private func updateUpperGridValueIfNeeded() {
-        upperGrid.updateLabel(at: value)
+    private func updateGridsSelection() {
+        [activeGrid, inactiveGrid, upperGrid]
+            .compactMap { $0 }
+            .forEach { $0.updateSelection(at: value) }
     }
     
     // MARK: - Changing value
@@ -359,5 +369,19 @@ open class RatingSlider: UIControl {
             let index = Int(xWithoutMargin / elementWidth)
             return range[index]
         }
+    }
+
+    // MARK: - Animation
+
+    public func startThumbSwingAnimation(power: CGFloat = 10, duration: CFTimeInterval = 0.4) {
+        guard thumb != nil else { return }
+        let shake = CASpringAnimation(keyPath: "position")
+        shake.duration = duration
+        shake.autoreverses = true
+        shake.isAdditive = true
+        shake.repeatCount = .infinity
+        shake.fromValue = NSValue(cgPoint: CGPoint(x: inactiveGrid.center.x - power, y: inactiveGrid.center.y ))
+        shake.toValue = NSValue(cgPoint: CGPoint(x: inactiveGrid.center.x + power, y: inactiveGrid.center.y))
+        thumbView?.layer.add(shake, forKey: "position")
     }
 }

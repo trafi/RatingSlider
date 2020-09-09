@@ -15,17 +15,32 @@ let thumb = Thumb(size: 34,
                   color: .white,
                   shadowColor: .black)
 
-let frame = CGRect(x: 20, y: 100, width: 260, height: 50)
+let frame = CGRect(x: 20, y: 100, width: 260, height: 60)
 
-let ratingSlider = RatingSlider(frame: frame,
-                                gridStyle: .dots(size: 3, gridHeight: 16, hasUpperGrid: true),
-                                thumb: thumb)
+let dottedStyle = GridStyle.dotted(.init(
+    activeColor: .blue,
+    activeSize: 6,
+    inactiveColor: .brown,
+    inactiveSize: 3,
+    labels: .init(
+        activeColor: .red,
+        inactiveColor: .green)
+    )
+)
+
+let labeledStyle = GridStyle.labeled(.init(
+    activeFont: .boldSystemFont(ofSize: 12),
+    activeColor: .red,
+    inactiveFont: .italicSystemFont(ofSize: 6),
+    inactiveColor: .blue)
+)
+
+let ratingSlider = RatingSlider(frame: frame, gridStyle: dottedStyle, thumb: thumb)
 
 ratingSlider.activeTrackColor = #colorLiteral(red: 0.9425747991, green: 0.8432862163, blue: 0.1268348098, alpha: 1)
 ratingSlider.inactiveTrackColor = #colorLiteral(red: 0.8508961797, green: 0.8510394692, blue: 0.850877285, alpha: 1)
-ratingSlider.activeColor = #colorLiteral(red: 0.6548359394, green: 0.6549482346, blue: 0.6548211575, alpha: 1)
-ratingSlider.inactiveColor = #colorLiteral(red: 0.6548359394, green: 0.6549482346, blue: 0.6548211575, alpha: 1)
 ratingSlider.range = 0...10
+ratingSlider.startThumbSwingAnimation(power: 2.5, duration: 0.3)
 
 container.addSubview(ratingSlider)
 

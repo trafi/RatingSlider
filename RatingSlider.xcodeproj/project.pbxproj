@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		C02A2B202382CE61004FDA6C /* Thumb.swift in Sources */ = {isa = PBXBuildFile; fileRef = C02A2B1F2382CE61004FDA6C /* Thumb.swift */; };
+		C08543CE2506495100163F24 /* Appearances.swift in Sources */ = {isa = PBXBuildFile; fileRef = C08543CD2506495100163F24 /* Appearances.swift */; };
 		D33050831DCCBDC000798056 /* RatingSliderGrid.swift in Sources */ = {isa = PBXBuildFile; fileRef = D33050821DCCBDC000798056 /* RatingSliderGrid.swift */; };
 		D359D7B51DCB761100B2532E /* RatingSlider.h in Headers */ = {isa = PBXBuildFile; fileRef = D359D7B31DCB761100B2532E /* RatingSlider.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D359D7BD1DCB767900B2532E /* RatingSlider.swift in Sources */ = {isa = PBXBuildFile; fileRef = D359D7BC1DCB767900B2532E /* RatingSlider.swift */; };
@@ -16,6 +17,7 @@
 
 /* Begin PBXFileReference section */
 		C02A2B1F2382CE61004FDA6C /* Thumb.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Thumb.swift; sourceTree = "<group>"; };
+		C08543CD2506495100163F24 /* Appearances.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Appearances.swift; sourceTree = "<group>"; };
 		D33050821DCCBDC000798056 /* RatingSliderGrid.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RatingSliderGrid.swift; sourceTree = "<group>"; };
 		D359D7B01DCB761100B2532E /* RatingSlider.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = RatingSlider.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D359D7B31DCB761100B2532E /* RatingSlider.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RatingSlider.h; sourceTree = "<group>"; };
@@ -69,6 +71,7 @@
 				D359D7BC1DCB767900B2532E /* RatingSlider.swift */,
 				D33050821DCCBDC000798056 /* RatingSliderGrid.swift */,
 				D359D7BE1DCB769E00B2532E /* CountableClosedRangeHelper.swift */,
+				C08543CD2506495100163F24 /* Appearances.swift */,
 				C02A2B1F2382CE61004FDA6C /* Thumb.swift */,
 			);
 			path = RatingSlider;
@@ -158,6 +161,7 @@
 				D359D7BF1DCB769E00B2532E /* CountableClosedRangeHelper.swift in Sources */,
 				D359D7BD1DCB767900B2532E /* RatingSlider.swift in Sources */,
 				C02A2B202382CE61004FDA6C /* Thumb.swift in Sources */,
+				C08543CE2506495100163F24 /* Appearances.swift in Sources */,
 				D33050831DCCBDC000798056 /* RatingSliderGrid.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
